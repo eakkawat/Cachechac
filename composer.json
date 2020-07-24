@@ -1,0 +1,21 @@
+{
+    "name": "eakkawat/cachee",
+    "description": "Russian Doll Caching",
+    "license": "MIT",
+    "keywords": ["laravel", "cache"],
+    "authors": [
+        {
+            "name": "eakkawat",
+            "email": "eakcomscicmu10@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "illuminate/support": "^8.0@dev"
+    },
+    "autoload":{
+        "psr-4":{
+            "Eakkawat\\Cachee\\":"src/"
+        }
+    }
+}
