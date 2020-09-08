@@ -2,33 +2,44 @@
 
 namespace Eakkawat\Cachee;
 
-use Cache;
+use Illuminate\Contracts\Cache\Repository as Cache;
 
 class RussianCaching
 {
-    protected static $keys = [];
+    
+    protected $cache;
 
-    public static function setUp($model)
+    public function __construct(Cache $cache)
     {
-        static::$keys[] = $key = $model->getCacheKey();
-
-        ob_start();
-        
-        return Cache::tags('view')->has($key);
-
+        $this->cache = $cache;
     }
 
-    public static function tearDown()
-    {
-        $key = array_pop(static::$keys);
 
-        $html = ob_get_clean();
-    
-        // search key in cache and return it if found
-        // if not then store html in cache
-        return Cache::tags('view')->rememberForever($key, function() use ($html){
-            return $html;
-        });
+    public function put($key, $fragment){
 
+        $key = $this->normalizeCacheKey($key);
+
+        return $this->cache
+            ->tags('view')
+            ->rememberForever($key, function() use ($fragment){
+                return $fragment;
+            });
+    }
+
+    public function has($key){
+
+       $key = $this->normalizeCacheKey($key);
+
+        return $this->cache
+            ->tags('view')
+            ->has($key);
+    }
+
+    protected function normalizeCacheKey($key){
+        if($key instanceof \Illuminate\Database\Eloquent\Model){
+            return $key->getCacheKey();
+        }
+
+        return $key;
     }
 }
